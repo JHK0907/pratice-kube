@@ -41,7 +41,7 @@ pipeline {
                         def customImage = docker.build(fullImageName, '.')
                         
                         // Harbor에 로그인하고 이미지를 푸시합니다.
-                        docker.withRegistry("https://${HARBOR_URL}", HARBOR_CRED_ID) {
+                        docker.withRegistry("http://${HARBOR_URL}", HARBOR_CRED_ID) {
                             customImage.push()
                         }
                     }
