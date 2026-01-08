@@ -57,3 +57,109 @@
    * 접속 주소: http://192.168.63.98:30080
 
   위 설정들을 마치고 파이프라인을 실행하면, 코드 변경 시 자동으로 K8s 클러스터에 배포되는 CI/CD 환경이 완성됩니다.     
+
+
+
+  ##
+
+  1단계: 소스코드 준비 및 Git 저장소에 업로드
+
+  먼저 로컬 컴퓨터에서 생성된 파일들을 Git 저장소(예: GitHub)에 올려야 Jenkins가 가져갈 수 있습니다.
+
+   1. `vmtest` 디렉토리로 이동합니다.
+   1     cd vmtest
+
+   2. Git을 초기화하고 모든 파일을 추가 후 커밋합니다.
+
+   1     git init
+   2     git add .
+   3     git commit -m "Initial setup for Jenkins K8s pipeline"
+
+   3. 원격 Git 저장소를 생성합니다.
+       * GitHub, GitLab 등 사용하시는 서비스에 접속하여 vmtest (또는 원하는 이름)으로 새로운 비공개(Private) 저장소를     
+         만듭니다.
+
+   4. 로컬 저장소와 원격 저장소를 연결하고 코드를 푸시(Push)합니다.
+       * 아래 명령어에서 <YOUR_GIT_REPOSITORY_URL> 부분을 3번 단계에서 만든 저장소의 URL로 변경하여 실행하세요.
+   1     git remote add origin <YOUR_GIT_REPOSITORY_URL>
+   2     git push -u origin main
+      (참고: 기본 브랜치명이 `master`인 경우 `main` 대신 `master`를 사용하세요.)
+
+  ---
+
+  2단계: Jenkins 서버 환경 설정
+
+  Jenkins를 실행하는 서버(VM)에 접속하여 파이프라인에 필요한 도구들을 설치하고 설정합니다.
+
+   1. Jenkins 서버에 SSH로 접속합니다.
+
+   2. 필수 도구들을 설치합니다. (Ubuntu 22.04+ 기준)
+
+    1     # 패키지 목록 업데이트
+    2     sudo apt-get update
+    3
+    4     # Docker, Kubectl, Node.js 설치
+    5     sudo apt-get install -y docker.io kubectl nodejs npm
+    6
+    7     # Jenkins 사용자를 docker 그룹에 추가하여 sudo 없이 docker 명령 사용
+    8     sudo usermod -aG docker jenkins
+    9
+   10     # 변경사항 적용을 위해 Jenkins 서비스 재시작
+   11     sudo systemctl restart jenkins
+
+   3. Docker가 Harbor 사설 레지스트리를 신뢰하도록 설정합니다. (매우 중요)
+       * daemon.json 파일을 엽니다.
+   1         sudo nano /etc/docker/daemon.json
+       * 아래 내용을 붙여넣고 저장합니다. (파일이 비어있으면 그대로 붙여넣기)
+   1         {
+   2           "insecure-registries" : ["192.168.63.99"]
+   3         }
+       * Docker 서비스를 재시작하여 설정을 적용합니다.
+
+   1         sudo systemctl restart docker
+
+  ---
+
+  3단계: Jenkins 웹 UI 설정
+
+  이제 Jenkins 웹 화면에서 플러그인과 자격 증명을 설정합니다.
+
+   1. Jenkins 플러그인 설치:
+       * Manage Jenkins > Plugins > Available plugins 탭으로 이동합니다.
+       * Docker Pipeline, Kubernetes CLI, NodeJS 를 검색하여 설치합니다.
+
+   2. Jenkins Global Tool 설정:
+       * Manage Jenkins > Tools 로 이동합니다.
+       * NodeJS installations 섹션에서 Add NodeJS를 클릭합니다.
+       * Name: node-16 (Jenkinsfile에 명시된 이름과 동일해야 합니다)
+       * Install automatically 옵션을 선택하고, 원하는 버전을 선택합니다 (예: NodeJS 16.x).
+       * Save를 누릅니다.
+
+   3. Jenkins Credentials 설정:
+       * Manage Jenkins > Credentials > System > Global credentials 로 이동합니다.
+       * Harbor 자격 증명 추가:
+           * Add Credentials 클릭
+           * Kind: Username with password
+           * ID: harbor-credentials
+           * Username / Password: Harbor 로그인 ID/비밀번호 입력
+       * Kubernetes 자격 증명 추가:
+           * Add Credentials 클릭
+           * Kind: Secret file
+           * ID: kubeconfig-credentials
+           * File: K8s 클러스터 접속용 kubeconfig 파일을 업로드합니다.
+
+  ---
+
+  4단계: Jenkins 파이프라인 생성 및 실행
+
+  모든 설정이 끝났습니다. 이제 Jenkins 프로젝트를 만들고 실행합니다.
+
+   1. Jenkins 메인 화면에서 `New Item` 을 클릭합니다.
+   2. 이름(예: vmtest-pipeline)을 입력하고 `Pipeline` 을 선택한 후 OK를 누릅니다.
+   1. Jenkins 메인 화면에서 `New Item` 을 클릭합니다.
+   2. 이름(예: vmtest-pipeline)을 입력하고 `Pipeline` 을 선택한 후 OK를 누릅니다.
+   3. Pipeline 탭으로 스크롤하여 Definition 항목을 `Pipeline script from SCM` 으로 변경합니다.
+   4. SCM 항목에서 `Git` 을 선택하고, Repository URL에 1단계에서 사용한 Git 저장소 URL을 입력합니다.
+       * (비공개 저장소인 경우 Credentials 항목에서 Git 접속용 자격 증명을 추가해야 합니다.)
+   5. Branch Specifier가 */main 또는 */master로 되어있는지 확인합니다.
+   6. Save를 누르고, 프로젝트 화면에서 `Build Now` 를 클릭하여 파이프라인을 실행합니다.
