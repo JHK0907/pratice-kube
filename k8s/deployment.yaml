@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vmtest-app-deployment
+  labels:
+    app: vmtest-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: vmtest-app
+  template:
+    metadata:
+      labels:
+        app: vmtest-app
+    spec:
+      containers:
+      - name: vmtest-app
+        # Jenkins 파이프라인에서 이 이미지 태그를 동적으로 교체할 예정입니다.
+        image: 192.168.63.99/library/vmtest-app:latest
+        ports:
+        - containerPort: 3000
