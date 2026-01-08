@@ -100,6 +100,45 @@
     3
     4     # Docker, Kubectl, Node.js 설치
     5     sudo apt-get install -y docker.io kubectl nodejs npm
+
+       1. 자바(JDK) 설치 (Jenkins 실행에 필수)
+   1     sudo apt-get update
+   2     sudo apt-get install -y openjdk-17-jre
+
+   2. Jenkins 저장소 설정 및 설치
+       * Jenkins 설치에 필요한 GPG 키를 추가합니다.
+   1         sudo wget -O /usr/share/keyrings/jenkins-keyring.asc \
+   2           https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+       * Jenkins 저장소를 시스템에 추가합니다.
+
+   1         echo "deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+   2           https://pkg.jenkins.io/debian-stable binary/" | sudo tee \
+   3           /etc/apt/sources.list.d/jenkins.list > /dev/null
+       * 패키지 목록을 다시 업데이트하고 Jenkins를 설치합니다.
+   1         sudo apt-get update
+   2         sudo apt-get install -y jenkins
+
+   3. Jenkins 서비스 시작 및 부팅 시 자동 실행 설정
+   1     sudo systemctl start jenkins
+   2     sudo systemctl enable jenkins
+
+   4. 파이프라인에 필요한 다른 도구들 설치
+   1     sudo apt-get install -y docker.io kubectl nodejs npm
+
+   5. Jenkins 사용자를 docker 그룹에 추가
+       * 이제 jenkins 사용자가 존재하므로 아래 명령어가 성공적으로 실행됩니다.
+   1         sudo usermod -aG docker jenkins
+
+   6. Docker 데몬 설정 (Harbor 연동)
+       * /etc/docker/daemon.json 파일을 열고 아래 내용을 추가합니다.
+   1         sudo nano /etc/docker/daemon.json
+
+   1         {
+   2           "insecure-registries" : ["192.168.63.99"]
+   3         }
+       * Docker와 Jenkins 서비스를 재시작하여 모든 변경사항을 적용합니다.
+   1         sudo systemctl restart docker
+   2         sudo systemctl restart jenkins
     6
     7     # Jenkins 사용자를 docker 그룹에 추가하여 sudo 없이 docker 명령 사용
     8     sudo usermod -aG docker jenkins
