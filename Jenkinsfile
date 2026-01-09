@@ -70,4 +70,29 @@ pipeline {
             }
         }
     }
+    agent any
+    stages {
+        stage('Build') {
+            steps {
+                // Build an image for scanning | Input values for your image below
+                sh 'echo "FROM http://192.168.63.99:80/test/busybox:latest Dockerfile'
+                sh 'docker build --no-cache -t http://192.168.63.99:80/test/busybox:latest .'
+            }
+        }
+        stage('Scan') {
+            steps {
+                // Scan the image | Input value from first script copied below, ''
+prismaCloudScanImage - 'Scan Prisma Cloud Images'
+                prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+            }
+        }
+    }
+    post {
+        always {
+            // The post section lets you run the publish step regardless of the scan results | Input value from second script copied below, "
+prismaCloudPublish - 'Publish Prisma Cloud analysis results.'
+           prismaCloudPublish resultsFilePattern: 'prisma-cloud-scan-results.json'
+        }
+    }
+
 }
