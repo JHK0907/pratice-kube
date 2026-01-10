@@ -2,15 +2,16 @@ pipeline {
     agent any
 
     environment {
-        HARBOR_URL      = '192.168.63.99'
-        HARBOR_PROJECT  = 'library'
-        IMAGE_NAME      = 'vmtest-app'
-        // Jenkins의 빌드 번호를 이미지 태그로 사용
-        IMAGE_TAG       = "build-${BUILD_NUMBER}"
-        // Harbor Credential ID (Jenkins에서 생성)
-        HARBOR_CRED_ID  = 'harbor-credentials'
-        // Kubernetes Kubeconfig Credential ID (Jenkins에서 생성)
-        K8S_CRED_ID     = 'kubeconfig-credentials'
+        HARBOR_URL       = '192.168.63.99'
+        HARBOR_PROJECT   = 'library'
+        IMAGE_NAME       = 'vmtest-app'
+        IMAGE_TAG        = "build-${BUILD_NUMBER}"
+        HARBOR_CRED_ID   = 'harbor-credentials'
+        K8S_CRED_ID      = 'kubeconfig-credentials'
+        PRISMA_API_URL   = "https://api.jp.prismacloud.io"
+        // Jenkins Job SCM URL (e.g., 'your-git-server.com/user/repo') and branch will be used by Checkov
+        // Ensure the SCM URL is correctly configured in the Jenkins job
+        REPO_ID          = "${scm.userRemoteConfigs[0].url.tokenize('/')[2..].join('/')}/${scm.branches[0].name}"
     }
 
     stages {
@@ -30,12 +31,32 @@ pipeline {
             }
         }
 
+        stage('Checkov Security Scan') {
+            steps {
+                withCredentials([
+                    string(credentialsId: 'PC_USER', variable: 'pc_user'),
+                    string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')
+                ]) {
+                    script {
+                        docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
+                            try {
+                                sh "checkov -d . --use-enforcement-rules -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${pc_user}::${pc_password} --repo-id ${REPO_ID} --branch ${scm.branches[0].name}"
+                                junit skipPublishingChecks: true, testResults: 'results.xml'
+                            } catch (err) {
+                                junit skipPublishingChecks: true, testResults: 'results.xml'
+                                throw err
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         stage('Build & Push Docker Image') {
             steps {
                 script {
                     def fullImageName = "${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                     
-                    // Harbor 인증서가 사설인 경우 Jenkins Docker 데몬에 insecure-registry로 등록해야 합니다.
                     withCredentials([usernamePassword(credentialsId: HARBOR_CRED_ID, usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
                         // Docker 이미지 빌드
                         def customImage = docker.build(fullImageName, '.')
@@ -54,10 +75,8 @@ pipeline {
                 script {
                     def fullImageName = "${HARBOR_URL}/${HARBOR_PROJECT}/${IMAGE_NAME}:${IMAGE_TAG}"
                     
-                    // withKubeconfig를 사용하여 K8s 클러스터 접근 정보를 관리합니다.
                     withKubeconfig([credentialsId: K8S_CRED_ID]) {
                         // 1. 배포 파일의 이미지 태그를 현재 빌드 버전으로 교체합니다.
-                        // (주의: macOS/BSD의 sed와 호환되도록 -i '' 옵션을 사용)
                         sh "sed -i 's|image: .*|image: ${fullImageName}|g' k8s/deployment.yaml"
                         
                         // 2. kubectl을 사용하여 업데이트된 설정 파일을 클러스터에 적용합니다.
@@ -70,53 +89,9 @@ pipeline {
             }
         }
     }
-    agent any
-    stages {
-        stage('Build') {
-            steps {
-                // Build an image for scanning | Input values for your image below
-                sh 'echo "FROM http://192.168.63.99:80/harbor/projects/2/test/busybox:latest Dockerfile'
-                sh 'docker build --no-cache -t http://192.168.63.99:80/harbor/projects/2/test/busybox:latest .'
-            }
-        }
+
+    options {
+        preserveStashes()
+        timestamps()
     }
-        agent any
-        
-        environment {
-            PRISMA_API_URL="https://api.jp.prismacloud.io"
-        }
-        
-        stages {
-            stage('Checkout') {
-              steps {
-                  git branch: 'main', url: 'http://192.168.63.99:80'
-                  stash includes: '**/*', name: 'source'
-              }
-            }
-            stage('Checkov') {
-                steps {
-                    withCredentials([string(credentialsId: 'PC_USER', variable: 'pc_user'),string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')]) {
-                        script {
-                            docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
-                              unstash 'source'
-                              try {
-                                  sh 'checkov -d . --use-enforcement-rules -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${pc_user}::${pc_password} --repo-id  /192.168.63.99:80 --branch main'
-                                  junit skipPublishingChecks: true, testResults: 'results.xml'
-                              } catch (err) {
-                                  junit skipPublishingChecks: true, testResults: 'results.xml'
-                                  throw err
-                              }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        options {
-            preserveStashes()
-            timestamps()
-        }
-
-
-
 }
