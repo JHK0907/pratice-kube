@@ -4,14 +4,14 @@ pipeline {
     environment {
         HARBOR_URL       = '192.168.63.99'
         HARBOR_PROJECT   = 'test'
-        IMAGE_NAME       = 'test/nginx'
-        IMAGE_TAG        = "test/nginx:latest"
+        IMAGE_NAME       = 'vmtest-app' // Kubernetes deployment.yaml의 앱 이름과 일치시킵니다.
+        IMAGE_TAG        = "latest" // 또는 "v${env.BUILD_NUMBER}" 와 같이 동적으로 생성하는 것을 권장합니다.
         HARBOR_CRED_ID   = 'harbor-credentials'
         K8S_CRED_ID      = 'kubeconfig-credentials'
         PRISMA_API_URL   = "https://api.jp.prismacloud.io"
         // Jenkins Job SCM URL (e.g., 'your-git-server.com/user/repo') and branch will be used by Checkov
         // Ensure the SCM URL is correctly configured in the Jenkins job
-        REPO_ID          = "192.168.63.99/test/nginx"
+        REPO_ID          = "192.168.63.99/test/vmtest-app"
     }
 
     stages {
@@ -33,34 +33,18 @@ pipeline {
 
         stage('Checkov Security Scan') {
             steps {
-                withCredentials([
-                    
-withCredentials([string(credentialsId: 'BC_API_KEY', variable: 'BC_API_KEY')]) {
-    script {
-        docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
-            try {
-                sh """
-                    checkov -d . \
-                        -o cli \
-                        -o junitxml \
-                        --output-file-path console,results.xml \
-                        --bc-api-key ${BC_API_KEY} \
-                        --repo-id ${REPO_ID}
-                """
-                junit skipPublishingChecks: true, testResults: 'results.xml'
-            } catch (err) {
-                junit skipPublishingChecks: true, testResults: 'results.xml'
-                throw err
-            }
-        }
-    }
-}
-
-                ]) {
+                withCredentials([string(credentialsId: 'BC_API_KEY', variable: 'BC_API_KEY')]) {
                     script {
                         docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
                             try {
-                                sh "checkov -d . --use-enforcement-rules -o cli -o junitxml --output-file-path console,results.xml --bc-api-key ${pc_user}::${pc_password} --repo-id ${REPO_ID} --branch ${scm.branches[0].name}"
+                                sh """
+                                    checkov -d . \
+                                        -o cli \
+                                        -o junitxml \
+                                        --output-file-path console,results.xml \
+                                        --bc-api-key ${BC_API_KEY} \
+                                        --repo-id ${REPO_ID}
+                                """
                                 junit skipPublishingChecks: true, testResults: 'results.xml'
                             } catch (err) {
                                 junit skipPublishingChecks: true, testResults: 'results.xml'

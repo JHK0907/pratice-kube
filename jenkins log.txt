@@ -1,0 +1,691 @@
+Started by user 정휘권
+Obtained Jenkinsfile from git https://github.com/JHK0907/pratice-kube.git
+[Pipeline] Start of Pipeline
+[Pipeline] node
+Running on Jenkins in /var/lib/jenkins/workspace/hkjung-test
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Declarative: Checkout SCM)
+[Pipeline] checkout
+Selected Git installation does not exist. Using Default
+The recommended git tool is: NONE
+using credential github_credential
+ > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/hkjung-test/.git # timeout=10
+Fetching changes from the remote Git repository
+ > git config remote.origin.url https://github.com/JHK0907/pratice-kube.git # timeout=10
+Fetching upstream changes from https://github.com/JHK0907/pratice-kube.git
+ > git --version # timeout=10
+ > git --version # 'git version 2.43.0'
+using GIT_ASKPASS to set credentials 
+ > git fetch --tags --force --progress -- https://github.com/JHK0907/pratice-kube.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+ > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+Checking out Revision 73a0143811de308b9c7f93174cba7a8e11592033 (refs/remotes/origin/main)
+ > git config core.sparsecheckout # timeout=10
+ > git checkout -f 73a0143811de308b9c7f93174cba7a8e11592033 # timeout=10
+Commit message: "fix05"
+ > git rev-list --no-walk 73a0143811de308b9c7f93174cba7a8e11592033 # timeout=10
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] timestamps
+[Pipeline] {
+[Pipeline] stage
+[Pipeline] { (Checkout)
+[Pipeline] checkout
+12:55:32  Selected Git installation does not exist. Using Default
+12:55:32  The recommended git tool is: NONE
+12:55:33  using credential github_credential
+12:55:33   > git rev-parse --resolve-git-dir /var/lib/jenkins/workspace/hkjung-test/.git # timeout=10
+12:55:33  Fetching changes from the remote Git repository
+12:55:33   > git config remote.origin.url https://github.com/JHK0907/pratice-kube.git # timeout=10
+12:55:33  Fetching upstream changes from https://github.com/JHK0907/pratice-kube.git
+12:55:33   > git --version # timeout=10
+12:55:33   > git --version # 'git version 2.43.0'
+12:55:33  using GIT_ASKPASS to set credentials 
+12:55:33   > git fetch --tags --force --progress -- https://github.com/JHK0907/pratice-kube.git +refs/heads/*:refs/remotes/origin/* # timeout=10
+12:55:33   > git rev-parse refs/remotes/origin/main^{commit} # timeout=10
+12:55:33  Checking out Revision 73a0143811de308b9c7f93174cba7a8e11592033 (refs/remotes/origin/main)
+12:55:33   > git config core.sparsecheckout # timeout=10
+12:55:33   > git checkout -f 73a0143811de308b9c7f93174cba7a8e11592033 # timeout=10
+12:55:33  Commit message: "fix05"
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Install & Test)
+[Pipeline] tool
+[Pipeline] envVarsForTool
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
+12:55:34  + npm install
+12:55:36  
+12:55:36  up to date, audited 69 packages in 1s
+12:55:36  
+12:55:36  15 packages are looking for funding
+12:55:36    run `npm fund` for details
+12:55:36  
+12:55:36  found 0 vulnerabilities
+[Pipeline] sh
+12:55:36  + npm test
+12:55:36  
+12:55:36  > vmtest-app@1.0.0 test
+12:55:36  > echo "Tests passed!" && exit 0
+12:55:36  
+12:55:36  Tests passed!
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Checkov Security Scan)
+[Pipeline] withCredentials
+12:55:37  Masking supported pattern matches of $BC_API_KEY
+[Pipeline] {
+[Pipeline] script
+[Pipeline] {
+[Pipeline] isUnix
+[Pipeline] withEnv
+[Pipeline] {
+[Pipeline] sh
+12:55:37  + docker inspect -f . bridgecrew/checkov:latest
+12:55:37  .
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] withDockerContainer
+12:55:37  Jenkins does not seem to be running inside a container
+12:55:38  $ docker run -t -d -u 110:111 --entrypoint= -w /var/lib/jenkins/workspace/hkjung-test -v /var/lib/jenkins/workspace/hkjung-test:/var/lib/jenkins/workspace/hkjung-test:rw,z -v /var/lib/jenkins/workspace/hkjung-test@tmp:/var/lib/jenkins/workspace/hkjung-test@tmp:rw,z -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** -e ******** bridgecrew/checkov:latest cat
+12:55:38  $ docker top fa3bb0cbbc49141137a0336345232b9e1bbb36ede21ed94a436fb3b97d72ed1e -eo pid,comm
+[Pipeline] {
+[Pipeline] sh
+12:55:38  Warning: A secret was passed to "sh" using Groovy String interpolation, which is insecure.
+12:55:38  		 Affected argument(s) used the following variable(s): [BC_API_KEY]
+12:55:38  		 See https://jenkins.io/redirect/groovy-string-interpolation for details.
+12:55:38  + checkov -d . -o cli -o junitxml --output-file-path console,results.xml --bc-api-key **** --repo-id 192.168.63.99/test/nginx
+12:57:15  
+12:57:15         _               _
+12:57:15     ___| |__   ___  ___| | _______   __
+12:57:15    / __| '_ \ / _ \/ __| |/ / _ \ \ / /
+12:57:15   | (__| | | |  __/ (__|   < (_) \ V /
+12:57:15    \___|_| |_|\___|\___|_|\_\___/ \_/
+12:57:15  
+12:57:15  By Prisma Cloud | version: 3.2.497 
+12:57:15  
+12:57:15  kubernetes scan results:
+12:57:15  
+12:57:15  Passed checks: 24, Failed checks: 0, Skipped checks: 65
+12:57:15  
+12:57:15  Check: CKV_K8S_110: "The --service-account-private-key-file argument for controller managers is not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-service-account-private-key-file-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_86: "The --insecure-bind-address argument is set"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-insecure-bind-address-argument-is-not-set
+12:57:15  Check: CKV_K8S_118: "The --auto-tls argument is set to True"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-auto-tls-argument-is-not-set-to-true
+12:57:15  Check: CKV_K8S_39: "CAP_SYS_ADMIN Linux capability is used"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-36
+12:57:15  Check: CKV_K8S_96: "The --service-account-lookup argument is not set to true"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-service-account-lookup-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_102: "The --etcd-cafile argument is not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-etcd-cafile-argument-is-set-as-appropriate-1
+12:57:15  Check: CKV_K8S_105: "The API server does not make use of strong cryptographic ciphers"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-api-server-only-makes-use-of-strong-cryptographic-ciphers
+12:57:15  Check: CKV_K8S_159: "Limit the use of git-sync to prevent code injection"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  Check: CKV_K8S_108: "The --use-service-account-credentials argument for controller managers is not set to True"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-use-service-account-credentials-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_88: "The --insecure-port argument is not set to 0"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-insecure-port-argument-is-set-to-0
+12:57:15  Check: CKV_K8S_115: "The --bind-address argument is not set to 127.0.0.1"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-bind-address-argument-is-set-to-127001-1
+12:57:15  Check: CKV_K8S_99: "The --etcd-certfile and --etcd-keyfile arguments are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-etcd-certfile-and-etcd-keyfile-arguments-are-set-as-appropriate
+12:57:15  Check: CKV_K8S_73: "The --kubelet-certificate-authority argument is not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-kubelet-certificate-authority-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_111: "The --root-ca-file argument for controller managers is not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-root-ca-file-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_16: "Container is privileged"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-15
+12:57:15  Check: CKV_K8S_71: "The --kubelet-https argument is not set to True"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-kubelet-https-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_72: "The --kubelet-client-certificate and --kubelet-client-key arguments are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-kubelet-client-certificate-and-kubelet-client-key-arguments-are-set-as-appropriate
+12:57:15  Check: CKV_K8S_116: "The --cert-file and --key-file arguments are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-cert-file-and-key-file-arguments-are-set-as-appropriate
+12:57:15  Check: CKV_K8S_113: "The --bind-address argument for controller managers is not set to 127.0.0.1"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-bind-address-argument-is-set-to-127001
+12:57:15  Check: CKV_K8S_148: "The --tls-cert-file and --tls-private-key-file arguments for Kubelet are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-tls-cert-file-and-tls-private-key-file-arguments-are-set-as-appropriate-for-kubelet
+12:57:15  Check: CKV_K8S_104: "Encryption providers are not appropriately configured"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-etcd-cafile-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_149: "The --rotate-certificates argument is set to false"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-rotate-certificates-argument-is-not-set-to-false
+12:57:15  Check: CKV_K8S_119: "The --peer-cert-file and --peer-key-file arguments are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-peer-cert-file-and-peer-key-file-arguments-are-set-as-appropriate
+12:57:15  Check: CKV_K8S_100: "The --tls-cert-file and --tls-private-key-file arguments for API server are not set appropriately"
+12:57:15  	PASSED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: HIGH
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-tls-cert-file-and-tls-private-key-file-arguments-are-set-as-appropriate
+12:57:15  Check: CKV_K8S_21: "Default namespace is used"
+12:57:15  	SKIPPED for resource: Service.default.vmtest-app-service
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/service.yaml:1-14
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-20
+12:57:15  Check: CKV_K8S_31: "seccomp is not set to Docker/Default or Runtime/Default"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-29
+12:57:15  Check: CKV_K8S_43: "Images are not selected using a digest"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-39
+12:57:15  Check: CKV_K8S_29: "securityContext is not applied to pods and containers"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-securitycontext-is-applied-to-pods-and-containers
+12:57:15  Check: CKV_K8S_8: "Liveness probe is not configured"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-7
+12:57:15  Check: CKV_K8S_38: "Service account tokens are not mounted where necessary"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-35
+12:57:15  Check: CKV_K8S_20: "Containers run with AllowPrivilegeEscalation"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-19
+12:57:15  Check: CKV_K8S_10: "CPU request is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-9
+12:57:15  Check: CKV_K8S_22: "Read-Only filesystem for containers is not used"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-21
+12:57:15  Check: CKV_K8S_12: "Memory requests are not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-11
+12:57:15  Check: CKV_K8S_21: "Default namespace is used"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-20
+12:57:15  Check: CKV_K8S_40: "Containers do not run with a high UID"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-37
+12:57:15  Check: CKV_K8S_9: "Readiness probe is not configured"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-8
+12:57:15  Check: CKV_K8S_30: "securityContext is not applied to pods and containers in container context"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-28
+12:57:15  Check: CKV_K8S_28: "Admission of containers with NET_RAW capability is not minimized"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-27
+12:57:15  Check: CKV_K8S_13: "Memory limits are not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-12
+12:57:15  Check: CKV_K8S_37: "Admission of containers with capabilities assigned is not limited"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-34
+12:57:15  Check: CKV_K8S_11: "CPU limits are not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-10
+12:57:15  Check: CKV_K8S_23: "Admission of root containers not minimized"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-22
+12:57:15  Check: CKV_K8S_14: "Image tag is not set to Fixed"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-13
+12:57:15  Check: CKV_K8S_143: "The --streaming-connection-idle-timeout argument is set to 0"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-streaming-connection-idle-timeout-argument-is-not-set-to-0
+12:57:15  Check: CKV_K8S_114: "The --profiling argument is not set to False for scheduler"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-profiling-argument-is-set-to-false-1
+12:57:15  Check: CKV_K8S_69: "The --basic-auth-file argument is Set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-basic-auth-file-argument-is-not-set
+12:57:15  Check: CKV_K8S_74: "The --authorization-mode argument is set to AlwaysAllow for Kubelet"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-authorization-mode-argument-is-not-set-to-alwaysallow-1
+12:57:15  Check: CKV_K8S_147: "The --event-qps argument is not set to a level that ensures appropriate event capture"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-event-qps-argument-is-set-to-0-or-a-level-which-ensures-appropriate-event-capture
+12:57:15  Check: CKV_K8S_89: "The --secure-port argument is set to 0"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-secure-port-argument-is-not-set-to-0
+12:57:15  Check: CKV_K8S_92: "The --audit-log-maxage argument is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-audit-log-maxage-argument-is-set-to-30-or-as-appropriate
+12:57:15  Check: CKV_K8S_34: "Tiller (Helm V2) is deployed"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-32
+12:57:15  Check: CKV_K8S_15: "Image pull policy is not set to Always"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-14
+12:57:15  Check: CKV_K8S_139: "The --authorization-mode argument is set to AlwaysAllow for API server"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-authorization-mode-argument-is-not-set-to-alwaysallow
+12:57:15  Check: CKV_K8S_83: "The admission control plugin NamespaceLifecycle is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-namespacelifecycle-is-set
+12:57:15  Check: CKV_K8S_82: "The admission control plugin ServiceAccount is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-serviceaccount-is-set
+12:57:15  Check: CKV_K8S_138: "The --anonymous-auth argument is not set to False for Kubelet"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-anonymous-auth-argument-is-set-to-false
+12:57:15  Check: CKV_K8S_91: "The --audit-log-path argument is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-audit-log-path-argument-is-set
+12:57:15  Check: CKV_K8S_94: "The --audit-log-maxsize argument is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-audit-log-maxsize-argument-is-set-to-100-or-as-appropriate
+12:57:15  Check: CKV_K8S_144: "The --protect-kernel-defaults argument is not set to True"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-protect-kernel-defaults-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_106: "The --terminated-pod-gc-threshold argument for controller managers is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-terminated-pod-gc-threshold-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_25: "Admission of containers with added capability is not minimized"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-24
+12:57:15  Check: CKV_K8S_112: "The RotateKubeletServerCertificate argument for controller managers is not set to True"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-rotatekubeletservercertificate-argument-is-set-to-true-for-controller-manager
+12:57:15  Check: CKV_K8S_93: "The --audit-log-maxbackup argument is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-audit-log-maxbackup-argument-is-set-to-10-or-as-appropriate
+12:57:15  Check: CKV_K8S_33: "Kubernetes dashboard is deployed"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-31
+12:57:15  Check: CKV_K8S_26: "hostPort is specified"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-25
+12:57:15  Check: CKV_K8S_18: "Containers share host IPC namespace"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-17
+12:57:15  Check: CKV_K8S_97: "The --service-account-key-file argument is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-service-account-key-file-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_75: "The --authorization-mode argument does not include node"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-authorization-mode-argument-includes-node
+12:57:15  Check: CKV_K8S_85: "The admission control plugin NodeRestriction is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-noderestriction-is-set
+12:57:15  Check: CKV_K8S_35: "Secrets used as environment variables"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-33
+12:57:15  Check: CKV_K8S_141: "The --read-only-port argument is not set to 0"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-read-only-port-argument-is-set-to-0
+12:57:15  Check: CKV_K8S_145: "The --make-iptables-util-chains argument is not set to True"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-make-iptables-util-chains-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_151: "Kubelet does not use strong cryptographic ciphers"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-kubelet-only-makes-use-of-strong-cryptographic-ciphers
+12:57:15  Check: CKV_K8S_27: "Mounting Docker socket daemon in a container is not limited"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-26
+12:57:15  Check: CKV_K8S_81: "The admission control plugin SecurityContextDeny is set if PodSecurityPolicy is used"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-securitycontextdeny-is-set-if-podsecuritypolicy-is-not-used
+12:57:15  Check: CKV_K8S_68: "The --anonymous-auth argument is not set to False for API server"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-anonymous-auth-argument-is-set-to-false-1
+12:57:15  Check: CKV_K8S_84: "The admission control plugin PodSecurityPolicy is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-podsecuritypolicy-is-set
+12:57:15  Check: CKV_K8S_70: "The --token-auth-file argument is Set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-token-auth-file-parameter-is-not-set
+12:57:15  Check: CKV_K8S_80: "The admission control plugin AlwaysPullImages is not set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-alwayspullimages-is-set
+12:57:15  Check: CKV_K8S_90: "The --profiling argument is not set to false for API server"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-profiling-argument-is-set-to-false-2
+12:57:15  Check: CKV_K8S_95: "The --request-timeout argument is not set appropriately"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-request-timeout-argument-is-set-as-appropriate
+12:57:15  Check: CKV_K8S_77: "The --authorization-mode argument does not include RBAC"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-authorization-mode-argument-includes-rbac
+12:57:15  Check: CKV_K8S_79: "The admission control plugin AlwaysAdmit is set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-admission-control-plugin-alwaysadmit-is-not-set
+12:57:15  Check: CKV_K8S_146: "The --hostname-override argument is set"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: LOW
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-hostname-override-argument-is-not-set
+12:57:15  Check: CKV_K8S_107: "The --profiling argument for controller managers is not set to False"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-profiling-argument-is-set-to-false
+12:57:15  Check: CKV_K8S_17: "Containers share host process ID namespace"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-16
+12:57:15  Check: CKV_K8S_117: "The --client-cert-auth argument is not set to True"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/ensure-that-the-client-cert-auth-argument-is-set-to-true
+12:57:15  Check: CKV_K8S_19: "Containers share the host network namespace"
+12:57:15  	SKIPPED for resource: Deployment.default.vmtest-app-deployment
+12:57:15  	Severity: MEDIUM
+12:57:15  	Suppress comment: PC disabled this policy
+12:57:15  	File: /k8s/deployment.yaml:1-22
+12:57:15  	Guide: https://docs.prismacloud.io/en/enterprise-edition/policy-reference/kubernetes-policies/kubernetes-policy-index/bc-k8s-18
+12:57:15  sca_image scan results:
+12:57:15  
+12:57:15  Passed checks: 0, Failed checks: 9, Skipped checks: 1
+12:57:15  
+12:57:15  	/Dockerfile (node:18-alpine lines:13-13 (sha256:ee77c6cd7c)) - CVEs Summary:
+12:57:15  	┌──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐
+12:57:15  	│ Total CVEs: 9        │ critical: 0          │ high: 2              │ medium: 3            │ low: 4               │ skipped: 0           │ Total Packages Used: │
+12:57:15  	│                      │                      │                      │                      │                      │                      │ 0                    │
+12:57:15  	├──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┤
+12:57:15  	├──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┤
+12:57:15  	│ Package [Lines]      │ CVE ID               │ Severity             │ Current version      │ Root fixed version   │ Compliant version    │ Reachability         │
+12:57:15  	├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+12:57:15  	│ openssl [13-13]      │ CVE-2025-9230        │ HIGH                 │ 3.3.3-r0             │ 3.3.5.post0          │ 3.3.5.post0          │                      │
+12:57:15  	│                      │ CVE-2025-9231        │ MEDIUM               │                      │ 3.3.5.post0          │                      │                      │
+12:57:15  	│                      │ CVE-2025-9232        │ MEDIUM               │                      │ 3.3.5.post0          │                      │                      │
+12:57:15  	├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+12:57:15  	│ cross-spawn [13-13]  │ CVE-2024-21538       │ HIGH                 │ 7.0.3                │ 7.0.5                │ 7.0.5                │                      │
+12:57:15  	├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+12:57:15  	│ busybox [13-13]      │ CVE-2025-60876       │ MEDIUM               │ 1.37.0-r12           │ N/A                  │ 1.37.0.post14        │                      │
+12:57:15  	│                      │ CVE-2025-46394       │ LOW                  │                      │ 1.37.0.post14        │                      │                      │
+12:57:15  	│                      │ CVE-2024-58251       │ LOW                  │                      │ 1.37.0.post14        │                      │                      │
+12:57:15  	├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+12:57:15  	│ brace-expansion      │ CVE-2025-5889        │ LOW                  │ 2.0.1                │ 2.0.2                │ 2.0.2                │                      │
+12:57:15  	│ [13-13]              │                      │                      │                      │                      │                      │                      │
+12:57:15  	├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤
+12:57:15  	│ glob [13-13]         │ CVE-2025-64756       │ LOW                  │ 10.4.2               │ 10.5.0               │ 10.5.0               │                      │
+12:57:15  	└──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘
+12:57:15  
+12:57:15  More details: https://app.jp.prismacloud.io/projects?branch=bc-f7f1850_master&repoUUID=e697ca85-5e08-4227-bc3c-3e20a44f9240&runId=latest&viewId=CICDRuns
+[Pipeline] junit
+12:57:15  Recording test results
+[Pipeline] }
+12:57:15  $ docker stop --time=1 fa3bb0cbbc49141137a0336345232b9e1bbb36ede21ed94a436fb3b97d72ed1e
+12:57:16  $ docker rm -f --volumes fa3bb0cbbc49141137a0336345232b9e1bbb36ede21ed94a436fb3b97d72ed1e
+[Pipeline] // withDockerContainer
+[Pipeline] }
+[Pipeline] // script
+[Pipeline] }
+[Pipeline] // withCredentials
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Build & Push Docker Image)
+Stage "Build & Push Docker Image" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] stage
+[Pipeline] { (Deploy to Kubernetes)
+Stage "Deploy to Kubernetes" skipped due to earlier failure(s)
+[Pipeline] getContext
+[Pipeline] }
+[Pipeline] // stage
+[Pipeline] }
+[Pipeline] // timestamps
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // withEnv
+[Pipeline] }
+[Pipeline] // node
+[Pipeline] End of Pipeline
+ERROR: script returned exit code 1
+Finished: FAILURE
