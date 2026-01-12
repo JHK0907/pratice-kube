@@ -34,8 +34,28 @@ pipeline {
         stage('Checkov Security Scan') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'PC_USER', variable: 'pc_user'),
-                    string(credentialsId: 'PC_PASSWORD', variable: 'pc_password')
+                    
+withCredentials([string(credentialsId: 'BC_API_KEY', variable: 'BC_API_KEY')]) {
+    script {
+        docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
+            try {
+                sh """
+                    checkov -d . \
+                        -o cli \
+                        -o junitxml \
+                        --output-file-path console,results.xml \
+                        --bc-api-key ${BC_API_KEY} \
+                        --repo-id ${REPO_ID}
+                """
+                junit skipPublishingChecks: true, testResults: 'results.xml'
+            } catch (err) {
+                junit skipPublishingChecks: true, testResults: 'results.xml'
+                throw err
+            }
+        }
+    }
+}
+
                 ]) {
                     script {
                         docker.image('bridgecrew/checkov:latest').inside("--entrypoint=''") {
