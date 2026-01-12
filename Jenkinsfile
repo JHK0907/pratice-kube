@@ -4,14 +4,14 @@ pipeline {
     environment {
         HARBOR_URL       = '192.168.63.99'
         HARBOR_PROJECT   = 'test'
-        IMAGE_NAME       = 'test/busybox'
-        IMAGE_TAG        = "test/busybox:latest"
+        IMAGE_NAME       = 'test/nginx'
+        IMAGE_TAG        = "test/nginx:latest"
         HARBOR_CRED_ID   = 'harbor-credentials'
         K8S_CRED_ID      = 'kubeconfig-credentials'
         PRISMA_API_URL   = "https://api.jp.prismacloud.io"
         // Jenkins Job SCM URL (e.g., 'your-git-server.com/user/repo') and branch will be used by Checkov
         // Ensure the SCM URL is correctly configured in the Jenkins job
-        REPO_ID          = "192.168.63.99/test/busybox"
+        REPO_ID          = "192.168.63.99/test/nginx"
     }
 
     stages {
