@@ -3,9 +3,9 @@ pipeline {
 
     environment {
         HARBOR_URL       = '192.168.63.99'
-        HARBOR_PROJECT   = 'library'
-        IMAGE_NAME       = 'vmtest-app'
-        IMAGE_TAG        = "build-${BUILD_NUMBER}"
+        HARBOR_PROJECT   = 'test'
+        IMAGE_NAME       = 'test/busybox'
+        IMAGE_TAG        = "test/busybox:latest"
         HARBOR_CRED_ID   = 'harbor-credentials'
         K8S_CRED_ID      = 'kubeconfig-credentials'
         PRISMA_API_URL   = "https://api.jp.prismacloud.io"
