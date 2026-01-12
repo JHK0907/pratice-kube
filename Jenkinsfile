@@ -11,7 +11,7 @@ pipeline {
         PRISMA_API_URL   = "https://api.jp.prismacloud.io"
         // Jenkins Job SCM URL (e.g., 'your-git-server.com/user/repo') and branch will be used by Checkov
         // Ensure the SCM URL is correctly configured in the Jenkins job
-        REPO_ID          = "${scm.userRemoteConfigs[0].url.tokenize('/')[2..].join('/')}/${scm.branches[0].name}"
+        REPO_ID          = "192.168.63.99/test/busybox"
     }
 
     stages {
