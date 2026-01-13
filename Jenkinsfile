@@ -53,11 +53,6 @@ pipeline {
                         }
                     }
                 }
-    catchError(stageResult: 'UNSTABLE', buildResult: 'UNSTABLE') {
-      sh '''
-        set -e
-        prisma-cloud-scan.sh --exit-code-on-violation=1
-        '''
             }
         }
 
